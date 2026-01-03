@@ -1,0 +1,71 @@
+// Prisma schema для шахматного турнира
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String
+  nickname  String?
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Связи
+  matchesAsPlayer1 Match[] @relation("Player1Matches")
+  matchesAsPlayer2 Match[] @relation("Player2Matches")
+  
+  @@index([email])
+}
+
+model Tournament {
+  id                   String    @id @default(cuid())
+  name                 String
+  participantIds       String[]
+  stage                String    @default("group") // group, winners, losers, final, completed
+  groupStageCompleted  Boolean   @default(false)
+  winnersRoundStarted  Boolean   @default(false)
+  finalStageStarted    Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  
+  // Связи
+  matches              Match[]
+}
+
+model Match {
+  id           String    @id @default(cuid())
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  
+  player1Id    String
+  player1      User      @relation("Player1Matches", fields: [player1Id], references: [id])
+  player1Name  String
+  
+  player2Id    String
+  player2      User      @relation("Player2Matches", fields: [player2Id], references: [id])
+  player2Name  String
+  
+  stage        String    // group, winners, losers, final, third_place
+  round        Int       @default(1)
+  status       String    @default("pending") // pending, result_pending_confirmation, confirmed
+  
+  // Результат матча (JSON)
+  result       Json?
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  @@index([tournamentId])
+  @@index([player1Id])
+  @@index([player2Id])
+  @@index([stage])
+  @@index([status])
+}

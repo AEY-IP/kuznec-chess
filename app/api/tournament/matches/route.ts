@@ -1,0 +1,220 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { storage } from '@/lib/storage'
+import { getServerSession } from '@/lib/auth'
+import { Match } from '@/types'
+import { processMatchCompletion } from '@/lib/bracket-progression'
+
+export async function GET(request: NextRequest) {
+  // Автоматическая инициализация данных при первом запросе
+  if (storage.getAllUsers().length === 0) {
+    const { initializeTestData } = await import('@/lib/storage')
+    initializeTestData()
+  }
+
+  const tournament = storage.getCurrentTournament()
+  if (!tournament) {
+    return NextResponse.json({ error: 'Tournament not found' }, { status: 404 })
+  }
+
+  const searchParams = request.nextUrl.searchParams
+  const userId = searchParams.get('userId')
+  const stage = searchParams.get('stage')
+  const status = searchParams.get('status')
+
+  let matches = tournament.matches
+
+  if (userId) {
+    matches = matches.filter(
+      m => m.player1Id === userId || m.player2Id === userId
+    )
+  }
+
+  if (stage) {
+    matches = matches.filter(m => m.stage === stage)
+  }
+
+  if (status) {
+    if (status === 'pending_confirmation') {
+      matches = matches.filter(m => m.status === 'result_pending_confirmation')
+    } else {
+      matches = matches.filter(m => m.status === status)
+    }
+  }
+
+  return NextResponse.json({ matches })
+}
+
+export async function PUT(request: NextRequest) {
+  const session = await getServerSession()
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Автоматическая инициализация данных при первом запросе
+  if (storage.getAllUsers().length === 0) {
+    const { initializeTestData } = await import('@/lib/storage')
+    initializeTestData()
+  }
+
+  try {
+    const { matchId, result, action } = await request.json()
+    
+    if (!matchId) {
+      return NextResponse.json({ error: 'Match ID is required' }, { status: 400 })
+    }
+
+    const tournament = storage.getCurrentTournament()
+    if (!tournament) {
+      return NextResponse.json({ error: 'Tournament not found' }, { status: 404 })
+    }
+
+    const matchIndex = tournament.matches.findIndex(m => m.id === matchId)
+    if (matchIndex === -1) {
+      return NextResponse.json({ error: 'Match not found' }, { status: 404 })
+    }
+
+    const match = tournament.matches[matchIndex]
+    const isParticipant = match.player1Id === session.id || match.player2Id === session.id
+
+    if (!isParticipant) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+    }
+
+    if (action === 'propose') {
+      if (!result) {
+        return NextResponse.json({ error: 'Result is required' }, { status: 400 })
+      }
+
+      // Создаем обновленный матч - полностью новый объект
+      const updatedMatch: Match = {
+        ...match,
+        result: {
+          player1Score: result.player1Score,
+          player2Score: result.player2Score,
+          proposedBy: session.id,
+          player1Color: result.player1Color,
+          player2Color: result.player2Color,
+          gameNumber: result.gameNumber,
+        },
+        status: 'result_pending_confirmation',
+        proposedBy: session.id,
+        updatedAt: new Date(),
+      }
+
+      console.log('API: About to update match:', {
+        matchId,
+        oldStatus: match.status,
+        newStatus: updatedMatch.status,
+        proposedBy: updatedMatch.result?.proposedBy,
+        tournamentId: tournament.id
+      })
+
+      // Обновляем матч в хранилище
+      storage.updateMatch(tournament.id, updatedMatch)
+      
+      // Небольшая задержка для гарантии сохранения
+      await new Promise(resolve => setTimeout(resolve, 50))
+      
+      // Получаем обновленный турнир для ответа
+      const updatedTournament = storage.getTournament(tournament.id)
+      const updatedMatchFromStorage = updatedTournament?.matches.find(m => m.id === matchId)
+      
+      console.log('API PUT /matches: After storage.updateMatch:', {
+        matchId,
+        statusFromStorage: updatedMatchFromStorage?.status,
+        proposedByFromStorage: updatedMatchFromStorage?.result?.proposedBy,
+        tournamentId: tournament.id,
+        totalMatchesInTournament: updatedTournament?.matches.length
+      })
+      
+      // Проверяем, что матч действительно обновился
+      if (!updatedMatchFromStorage) {
+        console.error('API PUT /matches: ERROR - Match not found in storage after update!', {
+          matchId,
+          tournamentId: tournament.id
+        })
+      } else if (updatedMatchFromStorage.status !== 'result_pending_confirmation') {
+        console.error('API PUT /matches: ERROR - Match status mismatch!', {
+          matchId,
+          expected: 'result_pending_confirmation',
+          actual: updatedMatchFromStorage.status,
+          proposedBy: updatedMatchFromStorage.result?.proposedBy
+        })
+      } else {
+        console.log('API PUT /matches: SUCCESS - Match updated correctly!', {
+          matchId,
+          status: updatedMatchFromStorage.status,
+          proposedBy: updatedMatchFromStorage.result?.proposedBy
+        })
+      }
+      
+      return NextResponse.json({ 
+        match: updatedMatchFromStorage || updatedMatch,
+        success: true 
+      })
+    } 
+    
+    if (action === 'confirm') {
+      if (!match.result) {
+        return NextResponse.json({ error: 'No result to confirm' }, { status: 400 })
+      }
+
+      if (match.result.proposedBy === session.id) {
+        return NextResponse.json({ error: 'Cannot confirm own result' }, { status: 400 })
+      }
+
+      const updatedMatch: Match = {
+        ...match,
+        result: {
+          ...match.result,
+          confirmedBy: session.id,
+        },
+        status: 'confirmed',
+        updatedAt: new Date(),
+      }
+
+      storage.updateMatch(tournament.id, updatedMatch)
+
+      // Автоматическое продвижение игроков в турнирных сетках
+      if (updatedMatch.stage !== 'group') {
+        const updatedTournament = storage.getTournament(tournament.id)
+        if (updatedTournament) {
+          processMatchCompletion(updatedTournament, updatedMatch)
+        }
+      }
+
+      const finalTournament = storage.getTournament(tournament.id)
+      const finalMatch = finalTournament?.matches.find(m => m.id === matchId)
+      
+      return NextResponse.json({ 
+        match: finalMatch || updatedMatch,
+        success: true 
+      })
+    } 
+    
+    if (action === 'reject') {
+      const updatedMatch: Match = {
+        ...match,
+        result: undefined,
+        status: 'pending',
+        proposedBy: undefined,
+        updatedAt: new Date(),
+      }
+
+      storage.updateMatch(tournament.id, updatedMatch)
+      
+      const finalTournament = storage.getTournament(tournament.id)
+      const finalMatch = finalTournament?.matches.find(m => m.id === matchId)
+      
+      return NextResponse.json({ 
+        match: finalMatch || updatedMatch,
+        success: true 
+      })
+    }
+
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+  } catch (error) {
+    console.error('Error in PUT /api/tournament/matches:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
