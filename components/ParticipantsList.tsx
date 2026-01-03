@@ -118,12 +118,12 @@ export function ParticipantsList({ participants, currentUserId, tournament }: Pa
   })
 
   return (
-    <div className="bg-gradient-to-br from-white to-blue-50 rounded-3xl shadow-2xl p-8 border-2 border-primary/10">
+    <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-8 border-2 border-primary/10">
       {/* Табы */}
-      <div className="flex space-x-2 mb-6 border-b-2 border-gray-200">
+      <div className="flex space-x-2 mb-4 md:mb-6 border-b-2 border-gray-200">
         <button
           onClick={() => setActiveTab('group')}
-          className={`px-6 py-3 font-bold text-lg transition-all duration-300 border-b-4 ${
+          className={`px-3 md:px-6 py-2 md:py-3 font-bold text-sm md:text-lg transition-all duration-300 border-b-4 ${
             activeTab === 'group'
               ? 'border-primary text-primary'
               : 'border-transparent text-gray-500 hover:text-primary'
@@ -133,7 +133,7 @@ export function ParticipantsList({ participants, currentUserId, tournament }: Pa
         </button>
         <button
           onClick={() => setActiveTab('final')}
-          className={`px-6 py-3 font-bold text-lg transition-all duration-300 border-b-4 ${
+          className={`px-3 md:px-6 py-2 md:py-3 font-bold text-sm md:text-lg transition-all duration-300 border-b-4 ${
             activeTab === 'final'
               ? 'border-primary text-primary'
               : 'border-transparent text-gray-500 hover:text-primary'
@@ -143,8 +143,8 @@ export function ParticipantsList({ participants, currentUserId, tournament }: Pa
         </button>
       </div>
 
-      <h2 className="text-3xl font-bold text-primary mb-6 flex items-center space-x-3">
-        <span className="text-4xl">👥</span>
+      <h2 className="text-xl md:text-3xl font-bold text-primary mb-4 md:mb-6 flex items-center space-x-2 md:space-x-3">
+        <span className="text-2xl md:text-4xl">👥</span>
         <span>{activeTab === 'group' ? 'Участники турнира' : 'Участники финального тура'}</span>
       </h2>
 
@@ -157,26 +157,26 @@ export function ParticipantsList({ participants, currentUserId, tournament }: Pa
             return (
               <div 
                 key={info.user.id}
-                className="border-2 border-primary/10 rounded-2xl overflow-hidden bg-white hover:border-primary/30 transition-all duration-300"
+                className="border-2 border-primary/10 rounded-xl md:rounded-2xl overflow-hidden bg-white hover:border-primary/30 transition-all duration-300"
               >
                 <button
                   onClick={() => toggleExpand(info.user.id)}
-                  className="w-full px-6 py-5 flex items-center justify-between hover:bg-primary/5 transition-colors"
+                  className="w-full px-3 md:px-6 py-3 md:py-5 flex items-center justify-between hover:bg-primary/5 transition-colors"
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="text-3xl">
+                  <div className="flex items-center space-x-2 md:space-x-4">
+                    <div className="text-2xl md:text-3xl">
                       {info.user.id === currentUserId ? '♔' : '♟'}
                     </div>
                     <div className="text-left">
-                      <div className="font-bold text-primary text-lg">
+                      <div className="font-bold text-primary text-base md:text-lg">
                         {info.user.nickname || info.user.username}
                         {info.user.id === currentUserId && (
-                          <span className="ml-2 text-xs px-3 py-1 bg-gradient-to-r from-primary to-accent-mint text-white rounded-full font-bold">
+                          <span className="ml-1 md:ml-2 text-xs px-2 md:px-3 py-1 bg-gradient-to-r from-primary to-accent-mint text-white rounded-full font-bold">
                             Вы
                           </span>
                         )}
                       </div>
-                      <div className="text-sm text-gray-600 font-medium">
+                      <div className="text-xs md:text-sm text-gray-600 font-medium">
                         {info.gamesRemaining === 0 ? (
                           <span className="text-accent-mint font-bold">Все игры сыграны</span>
                         ) : (
@@ -186,18 +186,18 @@ export function ParticipantsList({ participants, currentUserId, tournament }: Pa
                     </div>
                   </div>
                   {isExpanded ? (
-                    <ChevronUp className="h-6 w-6 text-primary" />
+                    <ChevronUp className="h-5 w-5 md:h-6 md:w-6 text-primary flex-shrink-0" />
                   ) : (
-                    <ChevronDown className="h-6 w-6 text-primary" />
+                    <ChevronDown className="h-5 w-5 md:h-6 md:w-6 text-primary flex-shrink-0" />
                   )}
                 </button>
 
                 {isExpanded && info.gamesPlayed > 0 && (
-                  <div className="px-6 py-4 bg-gradient-to-br from-gray-50 to-blue-50 border-t-2 border-primary/10">
-                    <div className="text-sm text-gray-700 mb-3 font-bold">
+                  <div className="px-3 md:px-6 py-3 md:py-4 bg-gradient-to-br from-gray-50 to-blue-50 border-t-2 border-primary/10">
+                    <div className="text-xs md:text-sm text-gray-700 mb-2 md:mb-3 font-bold">
                       Результаты матчей:
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-2 md:space-y-3">
                       {info.matches
                         .filter(m => m.status === 'confirmed' && m.result)
                         .map((match, idx) => {
@@ -211,25 +211,25 @@ export function ParticipantsList({ participants, currentUserId, tournament }: Pa
                           return (
                             <div 
                               key={match.id}
-                              className="flex items-center justify-between py-3 px-4 bg-white rounded-xl border border-primary/10 hover:border-primary/30 transition-all"
+                              className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 py-2 md:py-3 px-3 md:px-4 bg-white rounded-lg md:rounded-xl border border-primary/10 hover:border-primary/30 transition-all"
                             >
-                              <div className="flex items-center space-x-3">
-                                <span className="text-sm text-gray-800 font-semibold">Игра {idx + 1}</span>
+                              <div className="flex items-center space-x-2 md:space-x-3">
+                                <span className="text-xs md:text-sm text-gray-800 font-semibold whitespace-nowrap">Игра {idx + 1}</span>
                                 {playerColor === 'white' ? (
-                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 border border-gray-500 shadow-sm">
+                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 border border-gray-500 shadow-sm whitespace-nowrap">
                                     ♔ Белые
                                   </span>
                                 ) : (
-                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-gradient-to-r from-gray-800 to-gray-900 text-white border border-gray-500 shadow-sm">
+                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-gradient-to-r from-gray-800 to-gray-900 text-white border border-gray-500 shadow-sm whitespace-nowrap">
                                     ♚ Черные
                                   </span>
                                 )}
                               </div>
-                              <div className="flex items-center space-x-3">
-                                <span className="text-sm font-bold text-primary">
+                              <div className="flex items-center space-x-2 md:space-x-3">
+                                <span className="text-sm md:text-base font-bold text-primary">
                                   {playerScore} : {opponentScore}
                                 </span>
-                                <span className={`text-xs px-3 py-1 rounded-full font-bold ${
+                                <span className={`text-xs px-2 md:px-3 py-1 rounded-full font-bold whitespace-nowrap ${
                                   playerScore > opponentScore
                                     ? 'bg-gradient-to-r from-accent-mint to-accent-cyan text-white'
                                     : playerScore < opponentScore

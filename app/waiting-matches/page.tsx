@@ -132,29 +132,29 @@ export default function WaitingMatchesPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-10 animate-fade-in">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-primary-light to-accent-cyan bg-clip-text text-transparent mb-3 flex items-center space-x-4">
-          <span className="text-6xl">♝</span>
-          <span>Партии, ожидающие подтверждения</span>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+      <div className="mb-6 md:mb-10 animate-fade-in">
+        <h1 className="text-2xl md:text-5xl font-bold bg-gradient-to-r from-primary via-primary-light to-accent-cyan bg-clip-text text-transparent mb-2 md:mb-3 flex items-center space-x-2 md:space-x-4">
+          <span className="text-3xl md:text-6xl">♝</span>
+          <span className="leading-tight">Партии, ожидающие подтверждения</span>
         </h1>
-        <p className="text-gray-600 text-lg font-medium">
+        <p className="text-gray-600 text-sm md:text-lg font-medium">
           Партии, которые вы предложили и они ожидают подтверждения от соперника ({waitingMatches.length})
         </p>
       </div>
 
       {waitingMatches.length === 0 ? (
-        <div className="bg-gradient-to-br from-white to-blue-50 rounded-3xl shadow-2xl p-16 text-center border-2 border-primary/10 animate-scale-in">
-          <div className="text-8xl mb-6">⏳</div>
-          <h2 className="text-3xl font-bold text-primary mb-3">
+        <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl md:rounded-3xl shadow-2xl p-8 md:p-16 text-center border-2 border-primary/10 animate-scale-in">
+          <div className="text-5xl md:text-8xl mb-4 md:mb-6">⏳</div>
+          <h2 className="text-xl md:text-3xl font-bold text-primary mb-2 md:mb-3">
             Нет партий, ожидающих подтверждения
           </h2>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 text-sm md:text-lg">
             Все ваши предложенные партии подтверждены или отклонены
           </p>
         </div>
       ) : (
-        <div className="space-y-6 animate-slide-up">
+        <div className="space-y-4 md:space-y-6 animate-slide-up">
           {waitingMatches.map(match => {
             const playerColor = getPlayerColor(match)
             const playerResult = getPlayerResult(match)
@@ -163,59 +163,59 @@ export default function WaitingMatchesPage() {
             return (
               <div
                 key={match.id}
-                className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-2xl p-8 border-2 border-primary-light hover:border-primary-light/60 transition-all duration-300 hover:shadow-[0_0_40px_rgba(59,102,219,0.3)] group"
+                className="bg-gradient-to-br from-white to-blue-50 rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-8 border-2 border-primary-light hover:border-primary-light/60 transition-all duration-300 hover:shadow-[0_0_40px_rgba(59,102,219,0.3)] group"
               >
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-4 mb-6">
-                      <div className="text-3xl group-hover:scale-110 transition-transform">♞</div>
+                    <div className="flex items-center space-x-3 md:space-x-4 mb-4 md:mb-6">
+                      <div className="text-2xl md:text-3xl group-hover:scale-110 transition-transform">♞</div>
                       <div>
-                        <div className="text-2xl font-bold text-primary">
+                        <div className="text-lg md:text-2xl font-bold text-primary">
                           vs {opponentName}
                         </div>
-                        <span className="flex items-center space-x-2 text-sm text-primary-light font-semibold">
-                          <Clock className="h-5 w-5" />
+                        <span className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm text-primary-light font-semibold">
+                          <Clock className="h-4 w-4 md:h-5 md:w-5" />
                           <span>Ожидает подтверждения</span>
                         </span>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                      <div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Ваш цвет</div>
-                        <div className="flex items-center space-x-2">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
+                      <div className="bg-white rounded-lg p-3 border border-primary/10">
+                        <div className="text-xs md:text-sm text-slate-600 mb-1">Ваш цвет</div>
+                        <div>
                           {playerColor === 'white' ? (
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 border-2 border-gray-500 shadow-md">
+                            <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 border-2 border-gray-500 shadow-md">
                               ♔ Белые
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-gradient-to-r from-gray-800 to-gray-900 text-white border-2 border-gray-500 shadow-md">
+                            <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-gradient-to-r from-gray-800 to-gray-900 text-white border-2 border-gray-500 shadow-md">
                               ♚ Черные
                             </span>
                           )}
                         </div>
                       </div>
-                      <div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Результат</div>
+                      <div className="bg-white rounded-lg p-3 border border-primary/10">
+                        <div className="text-xs md:text-sm text-slate-600 mb-1">Результат</div>
                         <div>
                           {playerResult === 'win' ? (
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-green-500 text-white border-2 border-green-600 shadow-md">
+                            <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-green-500 text-white border-2 border-green-600 shadow-md">
                               ✓ Победа
                             </span>
                           ) : playerResult === 'loss' ? (
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-red-500 text-white border-2 border-red-600 shadow-md">
+                            <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-red-500 text-white border-2 border-red-600 shadow-md">
                               ✗ Поражение
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-gray-400 text-white border-2 border-gray-500 shadow-md">
+                            <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-gray-400 text-white border-2 border-gray-500 shadow-md">
                               = Ничья
                             </span>
                           )}
                         </div>
                       </div>
-                      <div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Счет</div>
-                        <div className="inline-flex items-center px-4 py-2 rounded-lg text-lg font-bold bg-primary text-white border-2 border-primary-light shadow-md">
+                      <div className="bg-white rounded-lg p-3 border border-primary/10">
+                        <div className="text-xs md:text-sm text-slate-600 mb-1">Счет</div>
+                        <div className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-base md:text-lg font-bold bg-primary text-white border-2 border-primary-light shadow-md">
                           {match.player1Id === user.id 
                             ? `${match.result?.player1Score} : ${match.result?.player2Score}`
                             : `${match.result?.player2Score} : ${match.result?.player1Score}`
@@ -225,8 +225,8 @@ export default function WaitingMatchesPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center ml-6">
-                    <div className="text-5xl text-accent-cyan animate-pulse">⏱</div>
+                  <div className="flex items-center justify-center md:ml-6 md:mt-0">
+                    <div className="text-4xl md:text-5xl text-accent-cyan animate-pulse">⏱</div>
                   </div>
                 </div>
               </div>

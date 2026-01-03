@@ -213,29 +213,29 @@ export default function PendingMatchesPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-10 animate-fade-in">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-primary-light to-accent-mint bg-clip-text text-transparent mb-3 flex items-center space-x-4">
-          <span className="text-6xl">♕</span>
-          <span>Партии к подтверждению</span>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+      <div className="mb-6 md:mb-10 animate-fade-in">
+        <h1 className="text-2xl md:text-5xl font-bold bg-gradient-to-r from-primary via-primary-light to-accent-mint bg-clip-text text-transparent mb-2 md:mb-3 flex items-center space-x-2 md:space-x-4">
+          <span className="text-3xl md:text-6xl">♕</span>
+          <span className="leading-tight">Партии к подтверждению</span>
         </h1>
-        <p className="text-gray-600 text-lg font-medium">
+        <p className="text-gray-600 text-sm md:text-lg font-medium">
           Партии, требующие вашего подтверждения ({pendingMatches.length})
         </p>
       </div>
 
       {pendingMatches.length === 0 ? (
-        <div className="bg-gradient-to-br from-white to-blue-50 rounded-3xl shadow-2xl p-16 text-center border-2 border-primary/10 animate-scale-in">
-          <div className="text-8xl mb-6">♟</div>
-          <h2 className="text-3xl font-bold text-primary mb-3">
+        <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl md:rounded-3xl shadow-2xl p-8 md:p-16 text-center border-2 border-primary/10 animate-scale-in">
+          <div className="text-5xl md:text-8xl mb-4 md:mb-6">♟</div>
+          <h2 className="text-xl md:text-3xl font-bold text-primary mb-2 md:mb-3">
             Партий к подтверждению нет
           </h2>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 text-sm md:text-lg">
             Все партии подтверждены или ожидают вашего действия
           </p>
         </div>
       ) : (
-        <div className="space-y-6 animate-slide-up">
+        <div className="space-y-4 md:space-y-6 animate-slide-up">
           {pendingMatches.map(match => {
             const playerColor = getPlayerColor(match)
             const playerResult = getPlayerResult(match)
@@ -244,58 +244,58 @@ export default function PendingMatchesPage() {
             return (
               <div
                 key={match.id}
-                className="bg-gradient-to-br from-white to-yellow-50 rounded-2xl shadow-2xl p-8 border-2 border-accent-mint hover:border-accent-mint/60 transition-all duration-300 hover:shadow-[0_0_40px_rgba(94,219,190,0.3)] group"
+                className="bg-gradient-to-br from-white to-yellow-50 rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-8 border-2 border-accent-mint hover:border-accent-mint/60 transition-all duration-300 hover:shadow-[0_0_40px_rgba(94,219,190,0.3)] group"
               >
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-4 mb-6">
-                      <div className="text-3xl group-hover:scale-110 transition-transform">♜</div>
+                    <div className="flex items-center space-x-3 md:space-x-4 mb-4 md:mb-6">
+                      <div className="text-2xl md:text-3xl group-hover:scale-110 transition-transform">♜</div>
                       <div>
-                        <div className="text-2xl font-bold text-primary">
+                        <div className="text-lg md:text-2xl font-bold text-primary">
                           vs {opponentName}
                         </div>
-                        <span className="text-sm text-gray-600 font-medium">
+                        <span className="text-xs md:text-sm text-gray-600 font-medium">
                           Предложил: {match.result?.proposedBy ? proposerNames[match.result.proposedBy] || 'Неизвестно' : 'Неизвестно'}
                         </span>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                      <div className="bg-white rounded-xl p-4 shadow-md border border-primary/10">
-                        <div className="text-sm text-gray-600 mb-2 font-semibold">Ваш цвет</div>
-                        <div className="flex items-center">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6 mb-4 md:mb-6">
+                      <div className="bg-white rounded-lg md:rounded-xl p-3 md:p-4 shadow-md border border-primary/10">
+                        <div className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2 font-semibold">Ваш цвет</div>
+                        <div>
                           {playerColor === 'white' ? (
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 border-2 border-gray-500 shadow-md">
+                            <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 border-2 border-gray-500 shadow-md">
                               ♔ Белые
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-gradient-to-r from-gray-800 to-gray-900 text-white border-2 border-gray-500 shadow-md">
+                            <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-gradient-to-r from-gray-800 to-gray-900 text-white border-2 border-gray-500 shadow-md">
                               ♚ Черные
                             </span>
                           )}
                         </div>
                       </div>
-                      <div className="bg-white rounded-xl p-4 shadow-md border border-primary/10">
-                        <div className="text-sm text-gray-600 mb-2 font-semibold">Результат</div>
+                      <div className="bg-white rounded-lg md:rounded-xl p-3 md:p-4 shadow-md border border-primary/10">
+                        <div className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2 font-semibold">Результат</div>
                         <div>
                           {playerResult === 'win' ? (
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-green-500 text-white border-2 border-green-600 shadow-md">
+                            <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-green-500 text-white border-2 border-green-600 shadow-md">
                               ✓ Победа
                             </span>
                           ) : playerResult === 'loss' ? (
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-red-500 text-white border-2 border-red-600 shadow-md">
+                            <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-red-500 text-white border-2 border-red-600 shadow-md">
                               ✗ Поражение
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-gray-400 text-white border-2 border-gray-500 shadow-md">
+                            <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-gray-400 text-white border-2 border-gray-500 shadow-md">
                               = Ничья
                             </span>
                           )}
                         </div>
                       </div>
-                      <div className="bg-white rounded-xl p-4 shadow-md border border-primary/10">
-                        <div className="text-sm text-gray-600 mb-2 font-semibold">Счет</div>
-                        <div className="inline-flex items-center px-4 py-2 rounded-lg text-lg font-bold bg-primary text-white border-2 border-primary-light shadow-md">
+                      <div className="bg-white rounded-lg md:rounded-xl p-3 md:p-4 shadow-md border border-primary/10">
+                        <div className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2 font-semibold">Счет</div>
+                        <div className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-base md:text-lg font-bold bg-primary text-white border-2 border-primary-light shadow-md">
                           {match.player1Id === user.id 
                             ? `${match.result?.player1Score} : ${match.result?.player2Score}`
                             : `${match.result?.player2Score} : ${match.result?.player1Score}`
@@ -305,19 +305,19 @@ export default function PendingMatchesPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col space-y-3 ml-6">
+                  <div className="flex flex-col md:flex-row gap-2 md:gap-3">
                     <button
                       onClick={() => handleConfirm(match)}
-                      className="px-8 py-4 bg-gradient-to-r from-accent-mint to-accent-cyan text-white rounded-xl hover:shadow-[0_0_30px_rgba(94,219,190,0.5)] transition-all duration-300 flex items-center space-x-2 font-bold transform hover:scale-105"
+                      className="flex-1 px-4 md:px-8 py-3 md:py-4 bg-gradient-to-r from-accent-mint to-accent-cyan text-white rounded-xl hover:shadow-[0_0_30px_rgba(94,219,190,0.5)] transition-all duration-300 flex items-center justify-center space-x-2 font-bold transform hover:scale-105"
                     >
-                      <CheckCircle className="h-6 w-6" />
+                      <CheckCircle className="h-5 w-5 md:h-6 md:w-6" />
                       <span>Согласиться</span>
                     </button>
                     <button
                       onClick={() => handleReject(match)}
-                      className="px-8 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-all duration-300 flex items-center space-x-2 font-bold transform hover:scale-105"
+                      className="flex-1 px-4 md:px-8 py-3 md:py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-all duration-300 flex items-center justify-center space-x-2 font-bold transform hover:scale-105"
                     >
-                      <XCircle className="h-6 w-6" />
+                      <XCircle className="h-5 w-5 md:h-6 md:w-6" />
                       <span>Отказаться</span>
                     </button>
                   </div>
