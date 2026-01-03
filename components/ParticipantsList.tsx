@@ -236,8 +236,22 @@ export function ParticipantsList({ participants, currentUserId, tournament }: Pa
                                     ? 'bg-red-500 text-white'
                                     : 'bg-yellow-500 text-white'
                                 }`}>
-                                  {playerScore > opponentScore ? '✓ Победа' :
-                                   playerScore < opponentScore ? '✗ Поражение' : '= Ничья'}
+                                  {playerScore > opponentScore ? (
+                                    <>
+                                      <span className="md:hidden">✓ В</span>
+                                      <span className="hidden md:inline">✓ Победа</span>
+                                    </>
+                                  ) : playerScore < opponentScore ? (
+                                    <>
+                                      <span className="md:hidden">✗ П</span>
+                                      <span className="hidden md:inline">✗ Поражение</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span className="md:hidden">= Н</span>
+                                      <span className="hidden md:inline">= Ничья</span>
+                                    </>
+                                  )}
                                 </span>
                               </div>
                             </div>

@@ -200,15 +200,18 @@ export default function WaitingMatchesPage() {
                         <div>
                           {playerResult === 'win' ? (
                             <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-green-500 text-white border-2 border-green-600 shadow-md">
-                              ✓ Победа
+                              <span className="md:hidden">✓ В</span>
+                              <span className="hidden md:inline">✓ Победа</span>
                             </span>
                           ) : playerResult === 'loss' ? (
                             <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-red-500 text-white border-2 border-red-600 shadow-md">
-                              ✗ Поражение
+                              <span className="md:hidden">✗ П</span>
+                              <span className="hidden md:inline">✗ Поражение</span>
                             </span>
                           ) : (
                             <span className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold bg-gray-400 text-white border-2 border-gray-500 shadow-md">
-                              = Ничья
+                              <span className="md:hidden">= Н</span>
+                              <span className="hidden md:inline">= Ничья</span>
                             </span>
                           )}
                         </div>
