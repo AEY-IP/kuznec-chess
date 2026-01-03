@@ -15,15 +15,11 @@ export async function POST(request: Request) {
     // Получаем всех пользователей
     const users = await db.getAllUsers()
     
-    // Сбрасываем никнеймы у всех пользователей через прямой SQL
+    // Сбрасываем никнеймы у всех пользователей
     if (process.env.DATABASE_URL) {
-      // Используем Prisma для сброса никнеймов
-      await prisma.user.updateMany({
-        data: {
-          nickname: null
-        }
-      })
-      console.log('✅ Nicknames reset via Prisma')
+      // Используем прямой SQL для гарантированного сброса
+      await prisma.$executeRaw`UPDATE "User" SET nickname = NULL`
+      console.log('✅ Nicknames reset via SQL')
     } else {
       // In-memory storage
       for (const user of users) {
