@@ -44,11 +44,13 @@ export interface Tournament {
   id: string;
   name: string;
   stage: TournamentStage;
-  participants: string[]; // user ids
+  participantIds: string[]; // user ids
   matches: Match[];
   groupStageCompleted: boolean;
-  startedAt: Date;
-  finishedAt?: Date;
+  winnersRoundStarted: boolean;
+  finalStageStarted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface GroupStageStats {
