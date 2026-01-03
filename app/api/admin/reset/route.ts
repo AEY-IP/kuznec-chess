@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import * as db from '@/lib/db-adapter'
 import { generateGroupStageMatches } from '@/lib/tournament'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(request: Request) {
   try {
@@ -14,12 +15,23 @@ export async function POST(request: Request) {
     // Получаем всех пользователей
     const users = await db.getAllUsers()
     
-    // Сбрасываем никнеймы у всех пользователей
-    for (const user of users) {
-      await db.updateUser({
-        ...user,
-        nickname: undefined, // Убираем никнейм
+    // Сбрасываем никнеймы у всех пользователей через прямой SQL
+    if (process.env.DATABASE_URL) {
+      // Используем Prisma для сброса никнеймов
+      await prisma.user.updateMany({
+        data: {
+          nickname: null
+        }
       })
+      console.log('✅ Nicknames reset via Prisma')
+    } else {
+      // In-memory storage
+      for (const user of users) {
+        await db.updateUser({
+          ...user,
+          nickname: undefined,
+        })
+      }
     }
 
     // Получаем текущий турнир
