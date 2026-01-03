@@ -26,8 +26,17 @@ export async function POST(request: Request) {
     const tournament = await db.getCurrentTournament()
     
     if (tournament) {
+      // Получаем имена участников (username, так как никнеймы сброшены)
+      const participantNames: Record<string, string> = {}
+      for (const id of tournament.participantIds) {
+        const user = await db.getUser(id)
+        if (user) {
+          participantNames[id] = user.username
+        }
+      }
+      
       // Генерируем новые чистые матчи
-      const freshMatches = generateGroupStageMatches(tournament.participantIds)
+      const freshMatches = generateGroupStageMatches(tournament.participantIds, participantNames)
       
       // Обновляем турнир с чистыми матчами
       await db.updateTournament({
