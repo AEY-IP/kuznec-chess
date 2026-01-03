@@ -1,19 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { storage } from '@/lib/storage'
+import * as db from '@/lib/db-adapter'
 import { getServerSession } from '@/lib/auth'
 import { Match } from '@/types'
 import { processMatchCompletion } from '@/lib/bracket-progression'
 
 export async function GET(request: NextRequest) {
-  // Автоматическая инициализация данных при первом запросе
-  if (storage.getAllUsers().length === 0) {
-    const { initializeTestData } = await import('@/lib/storage')
-    initializeTestData()
-  }
-
-  const tournament = storage.getCurrentTournament()
+  const tournament = await db.getCurrentTournament()
   if (!tournament) {
-    return NextResponse.json({ error: 'Tournament not found' }, { status: 404 })
+    // Если турнира нет, возвращаем пустой массив вместо ошибки
+    return NextResponse.json({ matches: [] })
   }
 
   const searchParams = request.nextUrl.searchParams
@@ -50,12 +45,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Автоматическая инициализация данных при первом запросе
-  if (storage.getAllUsers().length === 0) {
-    const { initializeTestData } = await import('@/lib/storage')
-    initializeTestData()
-  }
-
   try {
     const { matchId, result, action } = await request.json()
     
@@ -63,7 +52,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Match ID is required' }, { status: 400 })
     }
 
-    const tournament = storage.getCurrentTournament()
+    const tournament = await db.getCurrentTournament()
     if (!tournament) {
       return NextResponse.json({ error: 'Tournament not found' }, { status: 404 })
     }
@@ -85,7 +74,6 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Result is required' }, { status: 400 })
       }
 
-      // Создаем обновленный матч - полностью новый объект
       const updatedMatch: Match = {
         ...match,
         result: {
@@ -109,44 +97,18 @@ export async function PUT(request: NextRequest) {
         tournamentId: tournament.id
       })
 
-      // Обновляем матч в хранилище
-      storage.updateMatch(tournament.id, updatedMatch)
+      await db.updateMatch(tournament.id, updatedMatch)
       
-      // Небольшая задержка для гарантии сохранения
-      await new Promise(resolve => setTimeout(resolve, 50))
-      
-      // Получаем обновленный турнир для ответа
-      const updatedTournament = storage.getTournament(tournament.id)
+      const updatedTournament = await db.getTournament(tournament.id)
       const updatedMatchFromStorage = updatedTournament?.matches.find(m => m.id === matchId)
       
-      console.log('API PUT /matches: After storage.updateMatch:', {
+      console.log('API PUT /matches: After db.updateMatch:', {
         matchId,
         statusFromStorage: updatedMatchFromStorage?.status,
         proposedByFromStorage: updatedMatchFromStorage?.result?.proposedBy,
         tournamentId: tournament.id,
         totalMatchesInTournament: updatedTournament?.matches.length
       })
-      
-      // Проверяем, что матч действительно обновился
-      if (!updatedMatchFromStorage) {
-        console.error('API PUT /matches: ERROR - Match not found in storage after update!', {
-          matchId,
-          tournamentId: tournament.id
-        })
-      } else if (updatedMatchFromStorage.status !== 'result_pending_confirmation') {
-        console.error('API PUT /matches: ERROR - Match status mismatch!', {
-          matchId,
-          expected: 'result_pending_confirmation',
-          actual: updatedMatchFromStorage.status,
-          proposedBy: updatedMatchFromStorage.result?.proposedBy
-        })
-      } else {
-        console.log('API PUT /matches: SUCCESS - Match updated correctly!', {
-          matchId,
-          status: updatedMatchFromStorage.status,
-          proposedBy: updatedMatchFromStorage.result?.proposedBy
-        })
-      }
       
       return NextResponse.json({ 
         match: updatedMatchFromStorage || updatedMatch,
@@ -173,17 +135,25 @@ export async function PUT(request: NextRequest) {
         updatedAt: new Date(),
       }
 
-      storage.updateMatch(tournament.id, updatedMatch)
+      await db.updateMatch(tournament.id, updatedMatch)
 
       // Автоматическое продвижение игроков в турнирных сетках
       if (updatedMatch.stage !== 'group') {
-        const updatedTournament = storage.getTournament(tournament.id)
+        const updatedTournament = await db.getTournament(tournament.id)
         if (updatedTournament) {
-          processMatchCompletion(updatedTournament, updatedMatch)
+          // Получаем имена участников для прогрессии
+          const participantNames: Record<string, string> = {}
+          for (const id of updatedTournament.participantIds) {
+            const user = await db.getUser(id)
+            if (user) participantNames[id] = user.nickname || user.username
+          }
+          processMatchCompletion(updatedTournament, updatedMatch, participantNames)
+          // Сохраняем обновленный турнир после прогрессии
+          await db.updateTournament(updatedTournament)
         }
       }
 
-      const finalTournament = storage.getTournament(tournament.id)
+      const finalTournament = await db.getTournament(tournament.id)
       const finalMatch = finalTournament?.matches.find(m => m.id === matchId)
       
       return NextResponse.json({ 
@@ -201,9 +171,9 @@ export async function PUT(request: NextRequest) {
         updatedAt: new Date(),
       }
 
-      storage.updateMatch(tournament.id, updatedMatch)
+      await db.updateMatch(tournament.id, updatedMatch)
       
-      const finalTournament = storage.getTournament(tournament.id)
+      const finalTournament = await db.getTournament(tournament.id)
       const finalMatch = finalTournament?.matches.find(m => m.id === matchId)
       
       return NextResponse.json({ 

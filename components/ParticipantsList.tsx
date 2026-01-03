@@ -213,8 +213,17 @@ export function ParticipantsList({ participants, currentUserId, tournament }: Pa
                               key={match.id}
                               className="flex items-center justify-between py-3 px-4 bg-white rounded-xl border border-primary/10 hover:border-primary/30 transition-all"
                             >
-                              <div className="text-sm text-gray-800 font-semibold">
-                                Игра {idx + 1} ({playerColor === 'white' ? '⚪ Белые' : '⚫ Черные'})
+                              <div className="flex items-center space-x-3">
+                                <span className="text-sm text-gray-800 font-semibold">Игра {idx + 1}</span>
+                                {playerColor === 'white' ? (
+                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 border border-gray-500 shadow-sm">
+                                    ♔ Белые
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-gradient-to-r from-gray-800 to-gray-900 text-white border border-gray-500 shadow-sm">
+                                    ♚ Черные
+                                  </span>
+                                )}
                               </div>
                               <div className="flex items-center space-x-3">
                                 <span className="text-sm font-bold text-primary">

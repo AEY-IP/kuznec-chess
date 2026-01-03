@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { storage } from '@/lib/storage'
+import * as db from '@/lib/db-adapter'
 import { getServerSession } from '@/lib/auth'
 
 export async function PUT(request: NextRequest) {
@@ -15,16 +15,17 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Nickname required' }, { status: 400 })
     }
 
-    const user = storage.getUser(session.id)
+    const user = await db.getUser(session.id)
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     user.nickname = nickname.trim()
-    storage.updateUser(user)
+    await db.updateUser(user)
 
     return NextResponse.json({ user })
   } catch (error) {
+    console.error('Nickname update error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

@@ -183,27 +183,42 @@ export default function WaitingMatchesPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                       <div>
                         <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Ваш цвет</div>
-                        <div className="text-lg font-semibold text-slate-900 dark:text-white">
-                          {playerColor === 'white' ? 'Белые' : 'Черные'}
+                        <div className="flex items-center space-x-2">
+                          {playerColor === 'white' ? (
+                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 border-2 border-gray-500 shadow-md">
+                              ♔ Белые
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-gradient-to-r from-gray-800 to-gray-900 text-white border-2 border-gray-500 shadow-md">
+                              ♚ Черные
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div>
                         <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Результат</div>
-                        <div className={`text-lg font-semibold ${
-                          playerResult === 'win' ? 'text-green-600 dark:text-green-400' :
-                          playerResult === 'loss' ? 'text-red-600 dark:text-red-400' :
-                          'text-yellow-600 dark:text-yellow-400'
-                        }`}>
-                          {playerResult === 'win' ? 'Победа' :
-                           playerResult === 'loss' ? 'Поражение' : 'Ничья'}
+                        <div>
+                          {playerResult === 'win' ? (
+                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-green-500 text-white border-2 border-green-600 shadow-md">
+                              ✓ Победа
+                            </span>
+                          ) : playerResult === 'loss' ? (
+                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-red-500 text-white border-2 border-red-600 shadow-md">
+                              ✗ Поражение
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold bg-gray-400 text-white border-2 border-gray-500 shadow-md">
+                              = Ничья
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div>
                         <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Счет</div>
-                        <div className="text-lg font-semibold text-slate-900 dark:text-white">
+                        <div className="inline-flex items-center px-4 py-2 rounded-lg text-lg font-bold bg-primary text-white border-2 border-primary-light shadow-md">
                           {match.player1Id === user.id 
-                            ? `${match.result?.player1Score} - ${match.result?.player2Score}`
-                            : `${match.result?.player2Score} - ${match.result?.player1Score}`
+                            ? `${match.result?.player1Score} : ${match.result?.player2Score}`
+                            : `${match.result?.player2Score} : ${match.result?.player1Score}`
                           }
                         </div>
                       </div>

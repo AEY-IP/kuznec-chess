@@ -15,6 +15,11 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: 'Шахматный турнир',
   description: 'Система учета шахматного турнира',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+  },
 }
 
 export default function RootLayout({

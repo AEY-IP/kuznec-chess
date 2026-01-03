@@ -1,5 +1,4 @@
 import { Match, Tournament } from '@/types';
-import { storage } from './storage';
 
 // Определение победителя и проигравшего матча
 export function getMatchWinner(match: Match): { winnerId: string; loserId: string } | null {
@@ -19,28 +18,27 @@ export function getMatchWinner(match: Match): { winnerId: string; loserId: strin
   return null;
 }
 
-// Получение имени игрока по ID (использует nickname если есть, иначе username)
-function getPlayerName(playerId: string): string {
-  const user = storage.getUser(playerId);
-  return user?.nickname || user?.username || 'TBD';
+// Получение имени игрока по ID из переданного словаря
+function getPlayerName(playerId: string, participantNames: Record<string, string>): string {
+  return participantNames[playerId] || 'TBD';
 }
 
 // Продвижение игроков в сетке винеров (топ-2, один матч)
-export function advanceWinnersBracket(tournament: Tournament, completedMatch: Match): void {
+export function advanceWinnersBracket(tournament: Tournament, completedMatch: Match, participantNames: Record<string, string>): void {
   const result = getMatchWinner(completedMatch);
   if (!result) return;
 
   const { winnerId, loserId } = result;
 
   // Победитель идет в финал
-  createFinalIfNeeded(tournament, winnerId);
+  createFinalIfNeeded(tournament, winnerId, participantNames);
   
   // Проигравший идет во второй тур нижней сетки
-  advanceToLosersBracket(tournament, loserId, 2, 0);
+  advanceToLosersBracket(tournament, loserId, 2, 0, participantNames);
 }
 
 // Создание финала если нужно
-function createFinalIfNeeded(tournament: Tournament, playerId: string): void {
+function createFinalIfNeeded(tournament: Tournament, playerId: string, participantNames: Record<string, string>): void {
   // Проверяем, есть ли уже финал с этим игроком
   const existingFinal = tournament.matches.find(m => 
     m.stage === 'final' && 
@@ -57,8 +55,7 @@ function createFinalIfNeeded(tournament: Tournament, playerId: string): void {
   
   if (finalMatches.length === 0) {
     // Создаем первую игру финала (пока без второго игрока)
-    const { generateFinalMatches } = require('./tournament');
-    const playerName = getPlayerName(playerId);
+    const playerName = getPlayerName(playerId, participantNames);
     
     // Создаем финал с одним игроком (второй будет добавлен позже)
     const final1 = {
@@ -88,33 +85,27 @@ function createFinalIfNeeded(tournament: Tournament, playerId: string): void {
     };
     
     tournament.matches.push(final1, final2);
-    storage.updateTournament(tournament);
   } else {
     // Финал уже начат, добавляем второго игрока
     const firstFinal = finalMatches.find(m => m.round === 1);
     if (firstFinal && firstFinal.player2Name === 'TBD') {
       firstFinal.player2Id = playerId;
-      firstFinal.player2Name = getPlayerName(playerId);
+      firstFinal.player2Name = getPlayerName(playerId, participantNames);
       
       const secondFinal = tournament.matches.find(m => m.stage === 'final' && m.round === 2);
       if (secondFinal) {
         secondFinal.player1Id = firstFinal.player1Id;
         secondFinal.player2Id = playerId;
         secondFinal.player1Name = firstFinal.player1Name;
-        secondFinal.player2Name = getPlayerName(playerId);
-      }
-      
-      storage.updateMatch(tournament.id, firstFinal);
-      if (secondFinal) {
-        storage.updateMatch(tournament.id, secondFinal);
+        secondFinal.player2Name = getPlayerName(playerId, participantNames);
       }
     }
   }
 }
 
 // Продвижение в сетку лузеров
-function advanceToLosersBracket(tournament: Tournament, playerId: string, fromRound: number, matchNumber: number = 0): void {
-  const playerName = getPlayerName(playerId);
+function advanceToLosersBracket(tournament: Tournament, playerId: string, fromRound: number, matchNumber: number = 0, participantNames: Record<string, string>): void {
+  const playerName = getPlayerName(playerId, participantNames);
 
   if (fromRound === 2) {
     // Проигравший из верхней сетки идет во второй тур нижней сетки
@@ -130,13 +121,12 @@ function advanceToLosersBracket(tournament: Tournament, playerId: string, fromRo
         losersRound2.player1Id = playerId;
         losersRound2.player1Name = playerName;
       }
-      storage.updateMatch(tournament.id, losersRound2);
     }
   }
 }
 
 // Продвижение в сетке лузеров
-export function advanceLosersBracket(tournament: Tournament, completedMatch: Match): void {
+export function advanceLosersBracket(tournament: Tournament, completedMatch: Match, participantNames: Record<string, string>): void {
   const result = getMatchWinner(completedMatch);
   if (!result) return;
 
@@ -154,33 +144,32 @@ export function advanceLosersBracket(tournament: Tournament, completedMatch: Mat
       // Победитель становится player1 во втором туре
       if (nextRoundMatch.player1Name === 'TBD') {
         nextRoundMatch.player1Id = winnerId;
-        nextRoundMatch.player1Name = getPlayerName(winnerId);
-        storage.updateMatch(tournament.id, nextRoundMatch);
+        nextRoundMatch.player1Name = getPlayerName(winnerId, participantNames);
       }
     }
     // Проигравший вылетает
   } else if (round === 2) {
     // Второй раунд лузеров - победитель идет в финал
-    createFinalIfNeeded(tournament, winnerId);
+    createFinalIfNeeded(tournament, winnerId, participantNames);
     // Проигравший вылетает
   }
 }
 
 // Основная функция для обработки продвижения после подтверждения матча
-export function processMatchCompletion(tournament: Tournament, match: Match): void {
+export function processMatchCompletion(tournament: Tournament, match: Match, participantNames: Record<string, string>): void {
   if (match.stage === 'winners') {
-    advanceWinnersBracket(tournament, match);
+    advanceWinnersBracket(tournament, match, participantNames);
   } else if (match.stage === 'losers') {
-    advanceLosersBracket(tournament, match);
+    advanceLosersBracket(tournament, match, participantNames);
   } else if (match.stage === 'final') {
     // Для финала проверяем, нужно ли создавать третью игру
-    checkFinalProgress(tournament, match);
+    checkFinalProgress(tournament, match, participantNames);
   }
   // Для группового этапа продвижение не требуется
 }
 
 // Проверка прогресса финала (2 игры, при 1-1 третья)
-function checkFinalProgress(tournament: Tournament, completedMatch: Match): void {
+function checkFinalProgress(tournament: Tournament, completedMatch: Match, participantNames: Record<string, string>): void {
   const finalMatches = tournament.matches.filter(m => 
     m.stage === 'final' && 
     m.status === 'confirmed' &&
@@ -217,8 +206,8 @@ function checkFinalProgress(tournament: Tournament, completedMatch: Match): void
       }
       
       // Создаем третью игру
-      const player1Name = getPlayerName(player1Id);
-      const player2Name = getPlayerName(player2Id);
+      const player1Name = getPlayerName(player1Id, participantNames);
+      const player2Name = getPlayerName(player2Id, participantNames);
       
       const thirdGameMatch = {
         id: 'final-3',
@@ -234,8 +223,6 @@ function checkFinalProgress(tournament: Tournament, completedMatch: Match): void
       };
       
       tournament.matches.push(thirdGameMatch);
-      storage.updateTournament(tournament);
     }
   }
 }
-

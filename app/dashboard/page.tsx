@@ -158,7 +158,7 @@ export default function DashboardPage() {
         <div className="flex items-center space-x-6 text-slate-600 dark:text-slate-400">
           <div className="flex items-center space-x-2">
             <Users className="h-5 w-5" />
-            <span>{tournament?.participants.length || 0} участников</span>
+            <span>{tournament?.participantIds.length || 0} участников</span>
           </div>
           <div className="flex items-center space-x-2">
             <Trophy className="h-5 w-5" />

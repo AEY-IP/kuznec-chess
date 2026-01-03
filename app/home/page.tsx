@@ -66,8 +66,8 @@ export default function HomePage() {
         setTournament(tournamentData.tournament)
         
         // Загружаем участников
-        if (usersData.users && tournamentData.tournament.participants) {
-          const tournamentParticipants = tournamentData.tournament.participants
+        if (usersData.users && tournamentData.tournament.participantIds) {
+          const tournamentParticipants = tournamentData.tournament.participantIds
             .map((id: string) => usersData.users.find((u: User) => u.id === id))
             .filter((u: User | undefined): u is User => u !== undefined)
           setParticipants(tournamentParticipants)
@@ -111,11 +111,11 @@ export default function HomePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-10 animate-fade-in">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-primary-light to-accent-mint bg-clip-text text-transparent mb-3">
+      <div className="mb-8 md:mb-10 animate-fade-in">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-primary-light to-accent-mint bg-clip-text text-transparent mb-2 md:mb-3">
           Главная
         </h1>
-        <p className="text-gray-600 text-lg font-medium">Ваша статистика и управление партиями</p>
+        <p className="text-gray-600 text-base md:text-lg font-medium">Ваша статистика и управление партиями</p>
       </div>
 
       {/* Статистика */}
@@ -174,7 +174,7 @@ export default function HomePage() {
           <span className="text-4xl">♗</span>
           <span>Статистика по цветам</span>
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
           <div className="bg-white rounded-2xl p-5 shadow-lg border-2 border-primary/10 hover:border-primary/30 transition-all">
             <div className="text-sm text-gray-600 mb-2 font-semibold">Лучший цвет</div>
             <div className="text-2xl font-bold text-primary">
@@ -206,7 +206,7 @@ export default function HomePage() {
       </div>
 
       {/* Кнопки действий */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8">
         <button
           onClick={() => setIsRecordModalOpen(true)}
           className="bg-gradient-to-br from-primary to-primary-light text-white rounded-2xl shadow-2xl p-8 hover:shadow-[0_0_40px_rgba(36,27,222,0.4)] transition-all duration-300 text-left transform hover:scale-105 hover:-translate-y-1 group"

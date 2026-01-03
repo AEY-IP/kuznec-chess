@@ -1,13 +1,8 @@
 import { NextResponse } from 'next/server'
-import { storage, initializeTestData } from '@/lib/storage'
+import * as db from '@/lib/db-adapter'
 
 export async function GET() {
-  // Автоматическая инициализация данных при первом запросе
-  if (storage.getAllUsers().length === 0) {
-    initializeTestData()
-  }
-
-  const users = storage.getAllUsers()
+  const users = await db.getAllUsers()
   return NextResponse.json({ users })
 }
 

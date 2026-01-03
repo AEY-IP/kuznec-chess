@@ -33,7 +33,7 @@ export default function AdminPage() {
 
       if (tournamentData.tournament) {
         setTournament(tournamentData.tournament)
-        setSelectedParticipants(tournamentData.tournament.participants || [])
+        setSelectedParticipants(tournamentData.tournament.participantIds || [])
       }
 
       if (usersData.users) {
@@ -155,7 +155,7 @@ export default function AdminPage() {
               <Users className="h-6 w-6 text-primary-600" />
               <div>
                 <div className="text-sm text-slate-600 dark:text-slate-400">Участников</div>
-                <div className="font-semibold text-slate-900 dark:text-white">{tournament.participants.length}</div>
+                <div className="font-semibold text-slate-900 dark:text-white">{tournament.participantIds.length}</div>
               </div>
             </div>
             {tournament.stage === 'group' && (

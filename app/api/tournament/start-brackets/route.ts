@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { storage } from '@/lib/storage'
+import * as db from '@/lib/db-adapter'
 import { getServerSession } from '@/lib/auth'
-import { getTop2Participants, getPlaces3And4, generateWinnersBracket, generateLosersBracket, generateFinalMatches } from '@/lib/tournament'
+import { getTop2Participants, getPlaces3And4, generateWinnersBracket, generateLosersBracket } from '@/lib/tournament'
 import { calculateGroupStageStats } from '@/lib/tournament'
 
 export async function POST(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const tournament = storage.getCurrentTournament()
+    const tournament = await db.getCurrentTournament()
     if (!tournament) {
       return NextResponse.json({ error: 'Tournament not found' }, { status: 404 })
     }
@@ -20,16 +20,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Brackets already started' }, { status: 400 })
     }
 
-    // Подсчет статистики и получение топ-8
+    // Подсчет статистики и получение топ-4
     const participantNames: Record<string, string> = {}
-    tournament.participants.forEach(id => {
-      const user = storage.getUser(id)
-      if (user) participantNames[id] = user.username
-    })
+    for (const id of tournament.participantIds) {
+      const user = await db.getUser(id)
+      if (user) participantNames[id] = user.nickname || user.username
+    }
 
     const stats = calculateGroupStageStats(
       tournament.matches,
-      tournament.participants,
+      tournament.participantIds,
       participantNames
     )
 
@@ -54,14 +54,14 @@ export async function POST(request: NextRequest) {
     // Обновление турнира
     tournament.stage = 'winners'
     tournament.groupStageCompleted = true
-    tournament.participants = [...top2, ...places3And4] // топ-4 для финального тура
+    tournament.participantIds = [...top2, ...places3And4] // топ-4 для финального тура
     tournament.matches = [...tournament.matches, ...winnersMatches, ...losersMatches]
 
-    storage.updateTournament(tournament)
+    await db.updateTournament(tournament)
 
     return NextResponse.json({ tournament })
   } catch (error) {
+    console.error('Start brackets error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
-

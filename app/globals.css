@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Touch-friendly стили для мобильных */
+@layer base {
+  /* Минимальный размер для touch-элементов (44x44px по Apple HIG) */
+  button, a, input[type="button"], input[type="submit"] {
+    @apply min-h-[44px];
+  }
+  
+  /* Улучшенная прокрутка на iOS */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Плавная прокрутка */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 @layer utilities {
   /* Анимации */
   @keyframes fade-in {

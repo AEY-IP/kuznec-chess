@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
 import { User } from '@/types'
-import { storage } from './storage'
+import * as db from './db-adapter'
 
 export async function getServerSession(): Promise<User | null> {
   const cookieStore = await cookies()
@@ -8,7 +8,7 @@ export async function getServerSession(): Promise<User | null> {
   
   if (!userId) return null
   
-  return storage.getUser(userId) || null
+  return await db.getUser(userId) || null
 }
 
 export async function setServerSession(userId: string) {
