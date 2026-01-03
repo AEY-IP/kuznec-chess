@@ -114,11 +114,8 @@ export default function LoginPage() {
     }
   }
 
-  const handleQuickLogin = async (testEmail: string) => {
+  const handleQuickLogin = (testEmail: string) => {
     setEmail(testEmail)
-    // Автоматически отправляем форму
-    const event = new Event('submit', { bubbles: true, cancelable: true })
-    document.querySelector('form')?.dispatchEvent(event)
   }
 
   return (

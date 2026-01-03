@@ -36,25 +36,25 @@ export function Navbar() {
               </span>
             </Link>
             {user && (
-              <div className="hidden md:flex items-center space-x-6">
+              <div className="hidden md:flex items-center space-x-6 h-full">
                 <Link 
                   href="/home" 
-                  className="flex items-center space-x-2 text-white/90 hover:text-accent-mint transition-all duration-300 font-semibold group"
+                  className="flex items-center space-x-2 text-white/90 hover:text-accent-mint transition-all duration-300 font-semibold group h-full"
                 >
                   <Home className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                  <span>Главная</span>
+                  <span className="leading-none">Главная</span>
                 </Link>
                 <Link 
                   href="/group-stage" 
-                  className="text-white/90 hover:text-accent-mint transition-all duration-300 font-semibold relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent-mint hover:after:w-full after:transition-all after:duration-300"
+                  className="flex items-center text-white/90 hover:text-accent-mint transition-all duration-300 font-semibold relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent-mint hover:after:w-full after:transition-all after:duration-300 h-full"
                 >
-                  Групповой тур
+                  <span className="leading-none">Групповой тур</span>
                 </Link>
                 <Link 
                   href="/final-stage" 
-                  className="text-white/90 hover:text-accent-mint transition-all duration-300 font-semibold relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent-mint hover:after:w-full after:transition-all after:duration-300"
+                  className="flex items-center text-white/90 hover:text-accent-mint transition-all duration-300 font-semibold relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent-mint hover:after:w-full after:transition-all after:duration-300 h-full"
                 >
-                  Финальный тур
+                  <span className="leading-none">Финальный тур</span>
                 </Link>
               </div>
             )}
