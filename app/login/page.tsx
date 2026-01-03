@@ -122,9 +122,88 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Левая часть - Форма входа */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center px-4 py-8 md:py-12 bg-gradient-to-br from-primary-900 to-primary-700">
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-4 py-8 md:py-12 bg-gradient-to-br from-primary-900 to-primary-700">
+        {/* Слайдер сторис (мобильная версия - сверху) */}
+        <div className="lg:hidden mb-6 w-full max-w-sm">
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white">
+            {/* Прогресс-бары сверху */}
+            <div className="absolute top-0 left-0 right-0 z-10 flex gap-1 p-3">
+              {stories.map((_, index) => (
+                <div
+                  key={index}
+                  className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden"
+                >
+                  <div
+                    className="h-full bg-white rounded-full transition-all duration-100"
+                    style={{
+                      width: index === currentStory
+                        ? `${progress}%`
+                        : index < currentStory
+                        ? '100%'
+                        : '0%'
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Изображение */}
+            <div className="relative aspect-[9/16] bg-gradient-to-br from-primary/20 to-accent-mint/20">
+              <Image
+                src={stories[currentStory].image}
+                alt={stories[currentStory].caption}
+                fill
+                className="object-cover"
+                priority
+              />
+
+              {/* Подпись */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-4 pt-12">
+                <p className="text-white text-sm leading-relaxed font-semibold text-left drop-shadow-lg">
+                  {stories[currentStory].caption}
+                </p>
+              </div>
+            </div>
+
+            {/* Индикаторы для переключения */}
+            <div className="absolute left-0 right-0 top-16 bottom-16 flex">
+              <button
+                onClick={() => {
+                  setCurrentStory(prev => (prev - 1 + stories.length) % stories.length)
+                  setProgress(0)
+                }}
+                className="flex-1 cursor-pointer"
+                aria-label="Предыдущая история"
+              />
+              <button
+                onClick={() => {
+                  setCurrentStory(prev => (prev + 1) % stories.length)
+                  setProgress(0)
+                }}
+                className="flex-1 cursor-pointer"
+                aria-label="Следующая история"
+              />
+            </div>
+          </div>
+
+          {/* Стрелочка вниз - подсказка */}
+          <div className="flex justify-center mt-4 animate-bounce">
+            <svg 
+              className="w-8 h-8 text-white/70" 
+              fill="none" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth="2" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+          </div>
+        </div>
+
         <div className="max-w-md w-full">
           <div className="bg-white/95 backdrop-blur-lg rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 border-2 border-white/20">
             <div className="text-center mb-6 md:mb-8">
@@ -183,70 +262,6 @@ export default function LoginPage() {
                     {testEmail.split('@')[0]}
                   </button>
                 ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Слайдер сторис (мобильная версия) */}
-          <div className="lg:hidden mt-8">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white max-w-sm mx-auto">
-              {/* Прогресс-бары сверху */}
-              <div className="absolute top-0 left-0 right-0 z-10 flex gap-1 p-3">
-                {stories.map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden"
-                  >
-                    <div
-                      className="h-full bg-white rounded-full transition-all duration-100"
-                      style={{
-                        width: index === currentStory
-                          ? `${progress}%`
-                          : index < currentStory
-                          ? '100%'
-                          : '0%'
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Изображение */}
-              <div className="relative aspect-[9/16] bg-gradient-to-br from-primary/20 to-accent-mint/20">
-                <Image
-                  src={stories[currentStory].image}
-                  alt={stories[currentStory].caption}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-
-                {/* Подпись */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-4 pt-12">
-                  <p className="text-white text-sm leading-relaxed font-semibold text-left drop-shadow-lg">
-                    {stories[currentStory].caption}
-                  </p>
-                </div>
-              </div>
-
-              {/* Индикаторы для переключения */}
-              <div className="absolute left-0 right-0 top-16 bottom-16 flex">
-                <button
-                  onClick={() => {
-                    setCurrentStory(prev => (prev - 1 + stories.length) % stories.length)
-                    setProgress(0)
-                  }}
-                  className="flex-1 cursor-pointer"
-                  aria-label="Предыдущая история"
-                />
-                <button
-                  onClick={() => {
-                    setCurrentStory(prev => (prev + 1) % stories.length)
-                    setProgress(0)
-                  }}
-                  className="flex-1 cursor-pointer"
-                  aria-label="Следующая история"
-                />
               </div>
             </div>
           </div>
