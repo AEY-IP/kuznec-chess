@@ -51,6 +51,11 @@ class Storage {
     this.users.set(user.id, user);
   }
 
+  createUser(user: User): User {
+    this.users.set(user.id, user);
+    return user;
+  }
+
   // Tournament
   addTournament(tournament: Tournament): void {
     // Если турнир уже существует, не перезаписываем его (сохраняем существующие данные)
@@ -78,6 +83,12 @@ class Storage {
 
   updateTournament(tournament: Tournament): void {
     this.tournaments.set(tournament.id, tournament);
+  }
+
+  createTournament(tournament: Tournament): Tournament {
+    this.tournaments.set(tournament.id, tournament);
+    this.setCurrentTournament(tournament.id);
+    return tournament;
   }
 
   // Current user
@@ -339,10 +350,13 @@ export function initializeTestData() {
       id: 'tournament-1',
       name: 'Шахматный турнир 2024',
       stage: 'group',
-      participants: participantIds,
+      participantIds: participantIds,
       matches: matchesWithResults,
       groupStageCompleted: false,
-      startedAt: new Date(),
+      winnersRoundStarted: false,
+      finalStageStarted: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     storage.addTournament(tournament);
