@@ -186,10 +186,74 @@ export default function LoginPage() {
               </div>
             </div>
           </div>
+
+          {/* Слайдер сторис (мобильная версия) */}
+          <div className="lg:hidden mt-8">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white max-w-sm mx-auto">
+              {/* Прогресс-бары сверху */}
+              <div className="absolute top-0 left-0 right-0 z-10 flex gap-1 p-3">
+                {stories.map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden"
+                  >
+                    <div
+                      className="h-full bg-white rounded-full transition-all duration-100"
+                      style={{
+                        width: index === currentStory
+                          ? `${progress}%`
+                          : index < currentStory
+                          ? '100%'
+                          : '0%'
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Изображение */}
+              <div className="relative aspect-[9/16] bg-gradient-to-br from-primary/20 to-accent-mint/20">
+                <Image
+                  src={stories[currentStory].image}
+                  alt={stories[currentStory].caption}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+
+                {/* Подпись */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-4 pt-12">
+                  <p className="text-white text-sm leading-relaxed font-semibold text-left drop-shadow-lg">
+                    {stories[currentStory].caption}
+                  </p>
+                </div>
+              </div>
+
+              {/* Индикаторы для переключения */}
+              <div className="absolute left-0 right-0 top-16 bottom-16 flex">
+                <button
+                  onClick={() => {
+                    setCurrentStory(prev => (prev - 1 + stories.length) % stories.length)
+                    setProgress(0)
+                  }}
+                  className="flex-1 cursor-pointer"
+                  aria-label="Предыдущая история"
+                />
+                <button
+                  onClick={() => {
+                    setCurrentStory(prev => (prev + 1) % stories.length)
+                    setProgress(0)
+                  }}
+                  className="flex-1 cursor-pointer"
+                  aria-label="Следующая история"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Правая часть - Слайдер сторис */}
+      {/* Правая часть - Слайдер сторис (десктоп) */}
       <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 p-12">
         <div className="max-w-lg w-full">
           <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-white">

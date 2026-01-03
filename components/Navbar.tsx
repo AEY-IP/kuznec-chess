@@ -2,18 +2,24 @@
 
 import Link from 'next/link'
 import { useAuth } from './AuthProvider'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { LogOut, Home } from 'lucide-react'
 import { ChessPieces } from './ChessIcons'
 
 export function Navbar() {
   const { user, setUser } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
     setUser(null)
     router.push('/login')
+  }
+
+  // Скрываем Navbar на странице логина
+  if (pathname === '/login') {
+    return null
   }
 
   return (
