@@ -122,6 +122,10 @@ export default function PendingMatchesPage() {
       })
 
       if (res.ok) {
+        // Уведомляем другие компоненты об обновлении
+        window.dispatchEvent(new CustomEvent('match-updated'))
+        localStorage.setItem('match-updated', Date.now().toString())
+        
         await loadPendingMatches()
       } else {
         alert('Ошибка при подтверждении результата')
@@ -144,6 +148,10 @@ export default function PendingMatchesPage() {
       })
 
       if (res.ok) {
+        // Уведомляем другие компоненты об обновлении
+        window.dispatchEvent(new CustomEvent('match-updated'))
+        localStorage.setItem('match-updated', Date.now().toString())
+        
         await loadPendingMatches()
       } else {
         alert('Ошибка при отклонении результата')

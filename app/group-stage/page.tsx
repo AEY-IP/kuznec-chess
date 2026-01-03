@@ -10,13 +10,51 @@ export default function GroupStagePage() {
 
   useEffect(() => {
     loadStats()
+    
+    // Автообновление каждые 3 секунды
+    const interval = setInterval(() => {
+      loadStats()
+    }, 3000)
+    
+    // Слушаем события обновления
+    const handleMatchUpdate = () => {
+      loadStats()
+    }
+    window.addEventListener('match-updated', handleMatchUpdate)
+    
+    // Обновляем при фокусе на странице
+    const handleFocus = () => {
+      loadStats()
+    }
+    window.addEventListener('focus', handleFocus)
+    
+    // Обновляем при видимости страницы
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadStats()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('match-updated', handleMatchUpdate)
+      window.removeEventListener('focus', handleFocus)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [])
 
   const loadStats = async () => {
     try {
-      const res = await fetch('/api/tournament/stats')
+      // Добавляем timestamp для предотвращения кеширования
+      const res = await fetch(`/api/tournament/stats?_t=${Date.now()}`)
       const data = await res.json()
       if (data.stats) {
+        console.log('GroupStage: Loaded stats:', data.stats.map((s: any) => ({
+          username: s.username,
+          gamesPlayed: s.gamesPlayed,
+          points: s.points
+        })))
         setStats(data.stats)
       }
     } catch (error) {
