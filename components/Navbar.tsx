@@ -25,9 +25,9 @@ export function Navbar() {
   }
 
   return (
-    <nav className="bg-gradient-to-r from-primary-900 via-primary to-primary-light shadow-2xl border-b-4 border-accent-mint relative">
+    <nav className="bg-gradient-to-r from-primary-900 via-primary to-primary-light shadow-2xl border-b-4 border-accent-mint relative z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 md:h-20">
+        <div className="flex justify-between h-16 md:h-20">
           <div className="flex items-center space-x-4 md:space-x-8">
             <Link href="/home" className="flex items-center space-x-2 md:space-x-3 group">
               <div className="transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
@@ -64,15 +64,13 @@ export function Navbar() {
           <div className="flex items-center space-x-2 md:space-x-4">
             {user ? (
               <>
-                {/* Имя пользователя - скрыто на мобильных */}
+                {/* Десктоп: имя пользователя и кнопка выхода */}
                 <div className="hidden md:flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-xl border border-accent-mint/30 shadow-lg">
                   <ChessPieces.Pawn className="text-xl text-accent-mint" />
                   <span className="text-white font-semibold">
                     {user.nickname || user.username}
                   </span>
                 </div>
-                
-                {/* Кнопка выхода - только десктоп */}
                 <button
                   onClick={handleLogout}
                   className="hidden md:flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-300 transform hover:scale-105 font-semibold shadow-lg hover:shadow-red-500/50"
@@ -81,17 +79,13 @@ export function Navbar() {
                   <span>Выйти</span>
                 </button>
 
-                {/* Бургер меню - только мобильные */}
+                {/* Мобильный: бургер-меню */}
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   className="md:hidden p-2 text-white hover:text-accent-mint transition-colors"
                   aria-label="Меню"
                 >
-                  {mobileMenuOpen ? (
-                    <X className="h-7 w-7" />
-                  ) : (
-                    <Menu className="h-7 w-7" />
-                  )}
+                  {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                 </button>
               </>
             ) : (
@@ -108,12 +102,12 @@ export function Navbar() {
 
       {/* Мобильное меню */}
       {user && mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-primary-900/98 backdrop-blur-lg shadow-2xl border-b-2 border-accent-mint/30 z-50 animate-slide-down">
-          <div className="px-4 py-6 space-y-2">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-primary-900/98 backdrop-blur-lg shadow-2xl border-b-2 border-accent-mint/30 animate-slide-down">
+          <div className="px-4 py-4 space-y-1">
             {/* Имя пользователя */}
-            <div className="flex items-center space-x-3 px-4 py-3 bg-white/10 rounded-xl border border-accent-mint/30 mb-4">
-              <ChessPieces.Pawn className="text-2xl text-accent-mint" />
-              <span className="text-white font-bold text-lg">
+            <div className="flex items-center space-x-2 px-4 py-3 bg-white/10 rounded-lg border border-accent-mint/30 mb-3">
+              <ChessPieces.Pawn className="text-lg text-accent-mint" />
+              <span className="text-white font-semibold text-sm">
                 {user.nickname || user.username}
               </span>
             </div>
@@ -122,27 +116,39 @@ export function Navbar() {
             <Link 
               href="/home" 
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-3 px-4 py-3 text-white hover:bg-accent-mint/20 rounded-xl transition-all duration-300 font-semibold"
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-semibold ${
+                pathname === '/home' 
+                  ? 'bg-accent-mint/30 text-accent-mint' 
+                  : 'text-white hover:bg-white/10'
+              }`}
             >
-              <Home className="h-5 w-5 text-accent-mint" />
+              <Home className="h-5 w-5" />
               <span>Главная</span>
             </Link>
 
             <Link 
               href="/group-stage" 
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-3 px-4 py-3 text-white hover:bg-accent-mint/20 rounded-xl transition-all duration-300 font-semibold"
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-semibold ${
+                pathname === '/group-stage' 
+                  ? 'bg-accent-mint/30 text-accent-mint' 
+                  : 'text-white hover:bg-white/10'
+              }`}
             >
-              <span className="text-xl text-accent-mint">♖</span>
+              <ChessPieces.Rook className="text-lg" />
               <span>Групповой тур</span>
             </Link>
 
             <Link 
               href="/final-stage" 
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-3 px-4 py-3 text-white hover:bg-accent-mint/20 rounded-xl transition-all duration-300 font-semibold"
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-semibold ${
+                pathname === '/final-stage' 
+                  ? 'bg-accent-mint/30 text-accent-mint' 
+                  : 'text-white hover:bg-white/10'
+              }`}
             >
-              <span className="text-xl text-accent-mint">♕</span>
+              <ChessPieces.Queen className="text-lg" />
               <span>Финальный тур</span>
             </Link>
 
@@ -152,7 +158,7 @@ export function Navbar() {
                 setMobileMenuOpen(false)
                 handleLogout()
               }}
-              className="w-full flex items-center space-x-3 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-300 font-semibold shadow-lg mt-4"
+              className="w-full flex items-center space-x-3 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all duration-300 font-semibold shadow-lg mt-3"
             >
               <LogOut className="h-5 w-5" />
               <span>Выйти</span>
