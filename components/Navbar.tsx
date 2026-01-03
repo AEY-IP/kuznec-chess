@@ -102,12 +102,12 @@ export function Navbar() {
 
       {/* Мобильное меню */}
       {user && mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-primary-900/98 backdrop-blur-lg shadow-2xl border-b-2 border-accent-mint/30 animate-slide-down">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-2xl border-b-2 border-accent-mint/30 animate-slide-down">
           <div className="px-4 py-4 space-y-1">
             {/* Имя пользователя */}
-            <div className="flex items-center space-x-2 px-4 py-3 bg-white/10 rounded-lg border border-accent-mint/30 mb-3">
-              <ChessPieces.Pawn className="text-lg text-accent-mint" />
-              <span className="text-white font-semibold text-sm">
+            <div className="flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-primary-50 to-accent-mint/20 rounded-lg border border-accent-mint/30 mb-3">
+              <ChessPieces.Pawn className="text-lg text-primary" />
+              <span className="text-primary-900 font-semibold text-sm">
                 {user.nickname || user.username}
               </span>
             </div>
@@ -118,8 +118,8 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-semibold ${
                 pathname === '/home' 
-                  ? 'bg-accent-mint/30 text-accent-mint' 
-                  : 'text-white hover:bg-white/10'
+                  ? 'bg-accent-mint/30 text-primary-900' 
+                  : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
               <Home className="h-5 w-5" />
@@ -131,8 +131,8 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-semibold ${
                 pathname === '/group-stage' 
-                  ? 'bg-accent-mint/30 text-accent-mint' 
-                  : 'text-white hover:bg-white/10'
+                  ? 'bg-accent-mint/30 text-primary-900' 
+                  : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
               <ChessPieces.Rook className="text-lg" />
@@ -144,8 +144,8 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 font-semibold ${
                 pathname === '/final-stage' 
-                  ? 'bg-accent-mint/30 text-accent-mint' 
-                  : 'text-white hover:bg-white/10'
+                  ? 'bg-accent-mint/30 text-primary-900' 
+                  : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
               <ChessPieces.Queen className="text-lg" />
