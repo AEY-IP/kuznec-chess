@@ -221,10 +221,13 @@ export default function FinalStagePage() {
       id: 'demo-tournament',
       name: 'Демо турнир',
       stage: 'final',
-      participants: participantIds,
+      participantIds: participantIds,
       matches: demoMatches,
       groupStageCompleted: true,
-      startedAt: new Date(),
+      winnersRoundStarted: true,
+      finalStageStarted: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }
   }
 
