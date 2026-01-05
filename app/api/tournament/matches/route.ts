@@ -74,8 +74,14 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Result is required' }, { status: 400 })
       }
 
+      // Получаем актуальные никнеймы игроков
+      const player1 = await db.getUser(match.player1Id)
+      const player2 = await db.getUser(match.player2Id)
+
       const updatedMatch: Match = {
         ...match,
+        player1Name: player1?.nickname || player1?.username || match.player1Name,
+        player2Name: player2?.nickname || player2?.username || match.player2Name,
         result: {
           player1Score: result.player1Score,
           player2Score: result.player2Score,
@@ -125,8 +131,14 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Cannot confirm own result' }, { status: 400 })
       }
 
+      // Обновляем имена игроков при подтверждении
+      const player1 = await db.getUser(match.player1Id)
+      const player2 = await db.getUser(match.player2Id)
+
       const updatedMatch: Match = {
         ...match,
+        player1Name: player1?.nickname || player1?.username || match.player1Name,
+        player2Name: player2?.nickname || player2?.username || match.player2Name,
         result: {
           ...match.result,
           confirmedBy: session.id,
