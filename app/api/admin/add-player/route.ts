@@ -107,7 +107,7 @@ export async function POST(request: Request) {
     // Подсчитываем новую статистику
     const totalPlayers = updatedParticipantIds.length
     const matchesPerPlayer = (totalPlayers - 1) * 2
-    const maxPoints = totalPlayers - 1
+    const maxPoints = (totalPlayers - 1) * 2 // 2 игры с каждым соперником
     const totalMatches = (totalPlayers * (totalPlayers - 1))
 
     return NextResponse.json({
