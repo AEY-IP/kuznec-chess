@@ -249,7 +249,7 @@ export default function LoginPage() {
                 Быстрый вход:
               </p>
               <div className="grid grid-cols-2 gap-2">
-                {['nickolay@chess.com', 'sergey@chess.com', 'elizabeth@chess.com', 'pavel@chess.com', 'roman@chess.com', 'polina@chess.com', 'alexander@chess.com', 'alexey@chess.com'].map((testEmail) => (
+                {['nickolay@chess.com', 'sergey@chess.com', 'elizabeth@chess.com', 'pavel@chess.com', 'roman@chess.com', 'polina@chess.com', 'alexander@chess.com', 'alexey@chess.com', 'stepan@chess.com'].map((testEmail) => (
                   <button
                     key={testEmail}
                     type="button"
