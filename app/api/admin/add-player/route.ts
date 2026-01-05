@@ -31,7 +31,6 @@ export async function POST(request: Request) {
       nickname: undefined,
       role: 'user',
       createdAt: new Date(),
-      updatedAt: new Date(),
     })
 
     console.log(`✅ Created user: ${newUser.id}`)
