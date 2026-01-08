@@ -48,7 +48,15 @@ export async function GET() {
     console.log('✅ Турнир создан автоматически')
   }
   
-  return NextResponse.json({ tournament })
+  return NextResponse.json({ tournament }, {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'Surrogate-Control': 'no-store',
+      'CDN-Cache-Control': 'no-store',
+    }
+  })
 }
 
 export async function POST(request: NextRequest) {
@@ -79,7 +87,15 @@ export async function POST(request: NextRequest) {
     tournament.participantIds = participantIds
     await db.updateTournament(tournament)
 
-    return NextResponse.json({ tournament })
+    return NextResponse.json({ tournament }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store',
+        'CDN-Cache-Control': 'no-store',
+      }
+    })
   } catch (error) {
     console.error('Tournament create error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
