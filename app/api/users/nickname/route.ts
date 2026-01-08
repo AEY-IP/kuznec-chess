@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import * as db from '@/lib/db-adapter'
 import { getServerSession } from '@/lib/auth'
 
+// Отключаем кеширование Next.js
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function PUT(request: NextRequest) {
   try {
     console.log('=== PUT /api/users/nickname START ===')

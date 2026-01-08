@@ -4,6 +4,10 @@ import { getServerSession } from '@/lib/auth'
 import { Match } from '@/types'
 import { processMatchCompletion } from '@/lib/bracket-progression'
 
+// Отключаем кеширование Next.js
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET(request: NextRequest) {
   const tournament = await db.getCurrentTournament()
   if (!tournament) {

@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server'
 import * as db from '@/lib/db-adapter'
 import { calculateGroupStageStats } from '@/lib/tournament'
 
+// Отключаем кеширование Next.js
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET() {
   const tournament = await db.getCurrentTournament()
   if (!tournament) {
