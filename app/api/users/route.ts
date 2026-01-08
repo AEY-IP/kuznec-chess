@@ -7,6 +7,14 @@ export const revalidate = 0
 
 export async function GET() {
   const users = await db.getAllUsers()
-  return NextResponse.json({ users })
+  return NextResponse.json({ users }, {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'Surrogate-Control': 'no-store',
+      'CDN-Cache-Control': 'no-store',
+    }
+  })
 }
 
